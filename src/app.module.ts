@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModule } from './modules/user/user.module';
 
 
 @Module({
@@ -15,7 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: process.env.NAMEDB || 'venticrm',
       type:'postgres'
     }),
-    AuthModule, CustomersModule],
+    AuthModule, CustomersModule, UserModule],
   controllers: [],
   providers: [],
 })
