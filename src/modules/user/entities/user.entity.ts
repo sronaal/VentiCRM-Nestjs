@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
-
+import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
+import * as bcrypy from 'bcrypt'
 @Entity()
 export class User {
 
@@ -16,8 +15,14 @@ export class User {
     @Column()
     password: string
 
-    @Column()
+    @Column({default: 'customer'})
     role: string
+
+    @BeforeInsert()
+    async hashPassword(){
+        let hashPassword = await bcrypy.hash(this.password, 10)
+        this.password = hashPassword 
+    }
 
 
 }

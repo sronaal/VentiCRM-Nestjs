@@ -8,15 +8,17 @@ import { User } from './modules/user/entities/user.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       host: process.env.DBHOST || 'localhost',
       port: 5432,
       username: process.env.USERNAMEDB || 'userpassword',
       password: process.env.PASSWORDDB || 'password',
-      database: process.env.NAMEDB || 'crmventi',
+      database: process.env.NAMEDB || 'venticrm',
       type:'postgres',
-      entities:[User]
+      entities:[User],
+      synchronize: true
+      
     }),
     AuthModule, CustomersModule, UserModule],
   controllers: [],

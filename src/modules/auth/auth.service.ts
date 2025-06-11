@@ -1,26 +1,62 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../user/entities/user.entity';
+import { Repository } from 'typeorm';
+import { LoginDTO } from './dto/login-dto';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private jwtService: JwtService
+  ) { }
+
+
+
+  async logIn(loginDTO: LoginDTO) {
+
+    try {
+
+      const userFind = await this.userRepository.findOne({ where: { email: loginDTO.email } })
+
+      if (!userFind) { throw new UnauthorizedException('Correo y/o contrañasa invalidos') }
+
+      const isMatchPassword = bcrypt.compare(loginDTO.password, userFind.password)
+
+      if (!isMatchPassword) { throw new UnauthorizedException('Correo y/o contraseña invalidos') }
+
+      const user = { id: userFind.id, email: userFind.email, rol: userFind.role }
+
+      const token = await this.jwtService.signAsync(user)
+
+      return { token }
+    } catch (error) {
+
+      throw error
+    }
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async UserAuth(id: string) {
+    
+    try {
+      const userFind = await this.userRepository.findOne({ where: { id }})
+
+      if (!userFind) { throw new HttpException(`Usuario con id ${id} no encontrado`, HttpStatus.NOT_FOUND) }
+
+      return  { id: userFind.id, email: userFind.email, rol: userFind.role }
+
+
+      
+    } catch (error) {
+      throw error
+    }
+
+
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
 }
