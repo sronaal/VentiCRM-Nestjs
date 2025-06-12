@@ -59,17 +59,25 @@ export class UserService {
       if (!userFind) { throw new HttpException(`El usuario con el id ${id} no existe`, HttpStatus.NOT_FOUND) }
 
       return userFind
-      
+
     } catch (error) {
       throw error
     }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+
+    try {
+
+      await this.userRepository.update({id: id}, updateUserDto)
+      return `Usuario actualizado correctamente`
+    } catch (error) {
+      throw new HttpException(`Error al actualizar usuario  ${error}`, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    
+    
   }
 }

@@ -25,7 +25,7 @@ export class AuthService {
 
       if (!userFind) { throw new UnauthorizedException('Correo y/o contrañasa invalidos') }
 
-      const isMatchPassword = bcrypt.compare(loginDTO.password, userFind.password)
+      const isMatchPassword = await bcrypt.compare(loginDTO.password, userFind.password)
 
       if (!isMatchPassword) { throw new UnauthorizedException('Correo y/o contraseña invalidos') }
 
@@ -33,7 +33,7 @@ export class AuthService {
 
       const token = await this.jwtService.signAsync(user)
 
-      return { token }
+      return { token, user }
     } catch (error) {
 
       throw error
