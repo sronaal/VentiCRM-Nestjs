@@ -47,10 +47,8 @@ export class AuthService {
 
       if (!userFind) { throw new HttpException(`Usuario con id ${id} no encontrado`, HttpStatus.NOT_FOUND) }
 
-      return  { id: userFind.id, email: userFind.email, rol: userFind.role }
+      return  { id: userFind.id, name: userFind.name, email: userFind.email, rol: userFind.role }
 
-
-      
     } catch (error) {
       throw error
     }
